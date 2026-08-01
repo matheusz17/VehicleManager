@@ -1,2 +1,5 @@
 <Solution>
+  <Folder Name="/src/">
+    <Project Path="src/VehicleManager.Api/VehicleManager.Api.csproj" />
+  </Folder>
 </Solution>
