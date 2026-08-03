@@ -16,11 +16,23 @@ public class VeiculoService
         _context = context;
     }
 
-    public async Task<List<VeiculoDto>> GetAllAsync()
+    public async Task<IEnumerable<VeiculoDto>> GetAllAsync(string? busca)
     {
-        var veiculos = await _context.Veiculos.ToListAsync();
+        var query = _context.Veiculos.AsQueryable();
 
-        return veiculos.Select(v => v.ToDto()).ToList();
+        if (!string.IsNullOrWhiteSpace(busca))
+        {
+            busca = busca.Trim();
+
+            query = query.Where(v =>
+                v.Marca.Contains(busca) ||
+                v.Modelo.Contains(busca) ||
+                v.Placa.Contains(busca));
+        }
+
+        var veiculos = await query.ToListAsync();
+
+        return veiculos.Select(VeiculoMapper.ToDto);
     }
 
     public async Task<VeiculoDto?> GetByIdAsync(Guid id)

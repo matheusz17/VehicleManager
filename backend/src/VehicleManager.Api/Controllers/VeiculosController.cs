@@ -19,9 +19,10 @@ public class VeiculosController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Veiculo>>> GetVeiculos()
+    public async Task<ActionResult<IEnumerable<VeiculoDto>>> GetVeiculos(
+        [FromQuery] string? busca)
     {
-        return Ok(await _service.GetAllAsync());
+        return Ok(await _service.GetAllAsync(busca));
     }
 
     [HttpGet("{id:guid}")]
