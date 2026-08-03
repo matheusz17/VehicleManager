@@ -1,3 +1,4 @@
+/* Variáveis globais e estilos base: tudo começa com uma aparência consistente. */
 :root {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: #1e293b;
@@ -32,6 +33,7 @@ button, .button-link {
 button:hover, .button-link:hover { background: #1d4ed8; }
 button:disabled { cursor: wait; opacity: .65; }
 
+/* Estrutura fixa do layout: barra superior e área central do conteúdo. */
 .app-header { background: #0f172a; padding: 1rem max(1.25rem, calc((100% - 1100px) / 2)); }
 .brand { color: #fff; font-size: 1.2rem; text-decoration: none; }
 .app-content { max-width: 1100px; margin: 0 auto; padding: 2rem 1.25rem; }
@@ -43,6 +45,7 @@ h1 { margin: 0; color: #0f172a; font-size: 1.75rem; }
 h2 { margin: 0 0 .5rem; color: #334155; font-size: 1.1rem; }
 p { margin: 0; }
 
+/* Busca, tabela e mensagens de retorno da listagem. */
 .search-form { display: grid; gap: .4rem; max-width: 620px; font-weight: 700; }
 .search-controls { display: flex; gap: .75rem; }
 input, select, textarea { width: 100%; padding: .65rem; border: 1px solid #cbd5e1; border-radius: .45rem; background: #fff; color: #1e293b; }
@@ -60,9 +63,10 @@ td { white-space: nowrap; }
 .row-actions { display: flex; align-items: center; gap: .75rem; }
 .button-text { min-height: auto; padding: 0; border: 0; background: transparent; }
 .button-text:hover { background: transparent; }
+.button-delete, .button-delete:hover { background: transparent; color: #dc2626; }
+.button-delete:hover { color: #b91c1c; text-decoration: underline; }
 .button-danger { background: #dc2626; }
 .button-danger:hover { background: #b91c1c; }
-.button-text.button-danger { color: #dc2626; }
 .button-secondary { border-color: #cbd5e1; background: #fff; color: #334155; }
 .button-secondary:hover { background: #f8fafc; }
 .back-link { align-self: center; }
@@ -72,11 +76,13 @@ td { white-space: nowrap; }
 .confirmation-title { margin-bottom: .4rem; font-weight: 800; }
 .confirmation-actions, .form-actions { display: flex; justify-content: flex-end; gap: .75rem; margin-top: 1rem; }
 
+/* O formulário usa duas colunas no desktop para ficar compacto e uma no celular. */
 .vehicle-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .vehicle-form label { display: grid; gap: .4rem; font-weight: 700; }
 .vehicle-form small { color: #b91c1c; font-weight: 500; }
 .vehicle-form .feedback, .vehicle-form label:has(textarea), .form-actions { grid-column: 1 / -1; margin-top: 0; }
 
+/* Em telas menores, empilho os controles para não apertar campos e botões. */
 @media (max-width: 640px) {
   .app-content { padding: 1rem; }
   .card { padding: 1rem; }

@@ -5,6 +5,8 @@ namespace VehicleManager.Api.Dtos;
 
 public class UpdateVeiculoDto
 {
+    // É separado do DTO de criação para deixar claro o contrato de cada operação.
+    // Hoje os campos editáveis são iguais, mas Id e CriadoEm continuam fora daqui.
     [Required]
     [StringLength(8)]
     [RegularExpression(@"^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$")]
@@ -18,6 +20,7 @@ public class UpdateVeiculoDto
     [StringLength(80)]
     public string Modelo { get; set; } = string.Empty;
 
+    // O service ainda compara os dois anos e aplica o limite do ano atual.
     [Range(1950, 2100)]
     public int AnoFabricacao { get; set; }
 
@@ -43,6 +46,7 @@ public class UpdateVeiculoDto
     [Required]
     public StatusVeiculo Status { get; set; }
 
+    // Campo livre, porém limitado para não crescer sem controle no banco.
     [StringLength(500)]
     public string? Observacoes { get; set; }
 }

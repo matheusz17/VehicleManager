@@ -4,6 +4,7 @@ namespace VehicleManager.Api.Dtos;
 
 public class VeiculoDto
 {
+    // Este é o formato que sai da API e que o Vue usa para preencher lista e edição.
     public Guid Id { get; set; }
     public string Placa { get; set; } = string.Empty;
     public string Marca { get; set; } = string.Empty;
@@ -17,5 +18,6 @@ public class VeiculoDto
     public Cambio Cambio { get; set; }
     public StatusVeiculo Status { get; set; }
     public string? Observacoes { get; set; }
+    // Vai na resposta para consulta, mas nunca vem nos DTOs de criação/edição.
     public DateTime CriadoEm { get; set; }
 }
