@@ -1,9 +1,9 @@
 <template>
-  <header>
-    <RouterLink to="/">Vehicle Manager</RouterLink>
+  <header class="app-header">
+    <RouterLink to="/" class="brand">Vehicle Manager</RouterLink>
   </header>
 
-  <main>
+  <main class="app-content">
     <RouterView />
   </main>
 </template>

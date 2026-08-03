@@ -108,14 +108,19 @@ onMounted(() => {
 </script>
 
 <template>
-  <section>
-    <h1>{{ isEditing ? 'Editar veículo' : 'Novo veículo' }}</h1>
-    <RouterLink to="/">Voltar para a listagem</RouterLink>
+  <section class="card">
+    <div class="page-heading">
+      <div>
+        <p class="eyebrow">Estoque</p>
+        <h1>{{ isEditing ? 'Editar veículo' : 'Novo veículo' }}</h1>
+      </div>
+      <RouterLink to="/" class="back-link">Voltar para a listagem</RouterLink>
+    </div>
 
-    <p v-if="loading">Carregando veículo...</p>
+    <p v-if="loading" class="feedback" role="status">Carregando veículo...</p>
 
-    <form v-else @submit.prevent="saveVehicle">
-      <p v-if="error">{{ error }}</p>
+    <form v-else class="vehicle-form" @submit.prevent="saveVehicle">
+      <p v-if="error" class="feedback feedback-error" role="alert">{{ error }}</p>
       <label>
         Placa
         <input v-model="vehicle.placa" maxlength="8" pattern="[A-Za-z]{3}[0-9][A-Za-z0-9][0-9]{2}" required />
@@ -194,9 +199,12 @@ onMounted(() => {
         <small v-if="fieldErrors.observacoes">{{ fieldErrors.observacoes }}</small>
       </label>
 
-      <button type="submit" :disabled="saving">
-        {{ saving ? 'Salvando...' : 'Salvar veículo' }}
-      </button>
+      <div class="form-actions">
+        <RouterLink to="/" class="button-link button-secondary">Cancelar</RouterLink>
+        <button type="submit" :disabled="saving">
+          {{ saving ? 'Salvando...' : 'Salvar veículo' }}
+        </button>
+      </div>
     </form>
   </section>
 </template>
