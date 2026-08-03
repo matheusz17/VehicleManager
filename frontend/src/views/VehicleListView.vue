@@ -5,6 +5,16 @@ import api from '../services/api'
 const vehicles = ref([])
 const loading = ref(true)
 const error = ref('')
+const currencyFormatter = new Intl.NumberFormat('pt-BR', {
+  style: 'currency',
+  currency: 'BRL',
+})
+const numberFormatter = new Intl.NumberFormat('pt-BR')
+const statusLabels = ['Disponível', 'Reservado', 'Vendido']
+
+function formatStatus(status) {
+  return statusLabels[status] ?? status
+}
 
 async function loadVehicles() {
   loading.value = true
@@ -31,11 +41,30 @@ onMounted(loadVehicles)
     <p v-if="loading">Carregando veículos...</p>
     <p v-else-if="error">{{ error }}</p>
 
-    <ul v-else-if="vehicles.length">
-      <li v-for="vehicle in vehicles" :key="vehicle.id">
-        {{ vehicle.placa }} — {{ vehicle.marca }} {{ vehicle.modelo }}
-      </li>
-    </ul>
+    <table v-else-if="vehicles.length">
+      <thead>
+        <tr>
+          <th>Placa</th>
+          <th>Marca / Modelo</th>
+          <th>Ano</th>
+          <th>Cor</th>
+          <th>Km</th>
+          <th>Preço</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="vehicle in vehicles" :key="vehicle.id">
+          <td>{{ vehicle.placa }}</td>
+          <td>{{ vehicle.marca }} {{ vehicle.modelo }}</td>
+          <td>{{ vehicle.anoFabricacao }}/{{ vehicle.anoModelo }}</td>
+          <td>{{ vehicle.cor }}</td>
+          <td>{{ numberFormatter.format(vehicle.quilometragem) }}</td>
+          <td>{{ currencyFormatter.format(vehicle.preco) }}</td>
+          <td>{{ formatStatus(vehicle.status) }}</td>
+        </tr>
+      </tbody>
+    </table>
 
     <p v-else>Nenhum veículo cadastrado.</p>
   </section>
