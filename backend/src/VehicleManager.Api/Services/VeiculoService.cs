@@ -3,6 +3,7 @@ using VehicleManager.Api.Data;
 using VehicleManager.Api.Models;
 using VehicleManager.Api.Dtos;
 using VehicleManager.Api.Mappers;
+using VehicleManager.Api.Models.Enums;
 
 namespace VehicleManager.Api.Services;
 
@@ -31,17 +32,23 @@ public class VeiculoService
 
     public async Task<VeiculoDto> CreateAsync(CreateVeiculoDto dto)
     {
-        var veiculo = dto.ToEntity();
+        ValidarVeiculo(dto);
+
+        var veiculo = VeiculoMapper.ToEntity(dto);
+
+        veiculo.CriadoEm = DateTime.UtcNow;
 
         _context.Veiculos.Add(veiculo);
-
         await _context.SaveChangesAsync();
 
-        return veiculo.ToDto();
+        return VeiculoMapper.ToDto(veiculo);
     }
+    
 
     public async Task<bool> UpdateAsync(Guid id, UpdateVeiculoDto dto)
     {
+        ValidarVeiculo(dto);
+
         var veiculo = await _context.Veiculos.FindAsync(id);
 
         if (veiculo == null)
@@ -64,5 +71,45 @@ public class VeiculoService
         await _context.SaveChangesAsync();
 
         return true;
+    }
+
+    private static void ValidarVeiculo(CreateVeiculoDto dto)
+{
+    var anoMaximo = DateTime.UtcNow.Year + 1;
+
+    if (dto.AnoFabricacao < 1950 || dto.AnoFabricacao > anoMaximo)
+        throw new ArgumentException("Ano de fabricação inválido.");
+
+    if (dto.AnoModelo < dto.AnoFabricacao || dto.AnoModelo > anoMaximo)
+        throw new ArgumentException("Ano do modelo inválido.");
+
+    if (!Enum.IsDefined(typeof(Combustivel), dto.Combustivel))
+        throw new ArgumentException("Combustível inválido.");
+
+    if (!Enum.IsDefined(typeof(Cambio), dto.Cambio))
+        throw new ArgumentException("Câmbio inválido.");
+
+    if (!Enum.IsDefined(typeof(StatusVeiculo), dto.Status))
+        throw new ArgumentException("Status inválido.");
+}
+
+    private static void ValidarVeiculo(UpdateVeiculoDto dto)
+    {
+        var anoMaximo = DateTime.UtcNow.Year + 1;
+
+    if (dto.AnoFabricacao < 1950 || dto.AnoFabricacao > anoMaximo)
+        throw new ArgumentException("Ano de fabricação inválido.");
+
+    if (dto.AnoModelo < dto.AnoFabricacao || dto.AnoModelo > anoMaximo)
+        throw new ArgumentException("Ano do modelo inválido.");
+
+    if (!Enum.IsDefined(typeof(Combustivel), dto.Combustivel))
+        throw new ArgumentException("Combustível inválido.");
+
+    if (!Enum.IsDefined(typeof(Cambio), dto.Cambio))
+        throw new ArgumentException("Câmbio inválido.");
+
+    if (!Enum.IsDefined(typeof(StatusVeiculo), dto.Status))
+        throw new ArgumentException("Status inválido.");
     }
 }
