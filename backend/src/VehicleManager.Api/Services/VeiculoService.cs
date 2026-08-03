@@ -34,6 +34,12 @@ public class VeiculoService
     {
         ValidarVeiculo(dto);
 
+        var placaExiste = await _context.Veiculos
+            .AnyAsync(v => v.Placa == dto.Placa);
+
+        if (placaExiste)
+            throw new InvalidOperationException("Já existe um veículo com esta placa.");
+
         var veiculo = VeiculoMapper.ToEntity(dto);
 
         veiculo.CriadoEm = DateTime.UtcNow;
@@ -49,6 +55,12 @@ public class VeiculoService
     {
         ValidarVeiculo(dto);
 
+        var placaExiste = await _context.Veiculos
+            .AnyAsync(v => v.Placa == dto.Placa && v.Id != id);
+
+        if (placaExiste)
+            throw new InvalidOperationException("Já existe um veículo com esta placa.");
+
         var veiculo = await _context.Veiculos.FindAsync(id);
 
         if (veiculo == null)
@@ -59,7 +71,7 @@ public class VeiculoService
         await _context.SaveChangesAsync();
 
         return true;
-    }
+    }    
     public async Task<bool> DeleteAsync(Guid id)
     {
         var existente = await _context.Veiculos.FindAsync(id);

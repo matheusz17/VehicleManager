@@ -37,25 +37,49 @@ public class VeiculosController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<VeiculoDto>> PostVeiculo(CreateVeiculoDto dto)
     {
-        var novoVeiculo = await _service.CreateAsync(dto);
+        try
+        {
+            var veiculo = await _service.CreateAsync(dto);
 
-        return CreatedAtAction(
-            nameof(GetVeiculo),
-            new { id = novoVeiculo.Id },
-            novoVeiculo);
+            return CreatedAtAction(
+                nameof(GetVeiculo),
+                new { id = veiculo.Id },
+                veiculo);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ex.Message);
+        }
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     public async Task<IActionResult> Put(Guid id, UpdateVeiculoDto dto)
     {
-        var atualizado = await _service.UpdateAsync(id, dto);
+        try
+        {
+            var atualizado = await _service.UpdateAsync(id, dto);
 
-        if (!atualizado)
-            return NotFound();
+            if (!atualizado)
+                return NotFound();
 
-        return NoContent();
+            return NoContent();
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ex.Message);
+        }
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
