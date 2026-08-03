@@ -1,10 +1,13 @@
 <script setup>
-import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, reactive, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import api from '../services/api'
 
 const currentYear = new Date().getFullYear()
 const router = useRouter()
+const route = useRoute()
+const isEditing = computed(() => Boolean(route.params.id))
+const loading = ref(isEditing.value)
 const saving = ref(false)
 const error = ref('')
 const fieldErrors = ref({})
@@ -47,16 +50,36 @@ const statusOptions = [
   { value: 2, label: 'Vendido' },
 ]
 
+async function loadVehicle() {
+  try {
+    const response = await api.get(`/veiculos/${route.params.id}`)
+    const { id, criadoEm, ...vehicleData } = response.data
+    Object.assign(vehicle, vehicleData)
+  } catch (requestError) {
+    error.value = requestError.response?.status === 404
+      ? 'Veículo não encontrado.'
+      : 'Não foi possível carregar o veículo.'
+  } finally {
+    loading.value = false
+  }
+}
+
 async function saveVehicle() {
   saving.value = true
   error.value = ''
   fieldErrors.value = {}
 
+  const payload = {
+    ...vehicle,
+    placa: vehicle.placa.toUpperCase(),
+  }
+
   try {
-    await api.post('/veiculos', {
-      ...vehicle,
-      placa: vehicle.placa.toUpperCase(),
-    })
+    if (isEditing.value) {
+      await api.put(`/veiculos/${route.params.id}`, payload)
+    } else {
+      await api.post('/veiculos', payload)
+    }
     router.push('/')
   } catch (requestError) {
     const responseData = requestError.response?.data
@@ -78,14 +101,20 @@ async function saveVehicle() {
     saving.value = false
   }
 }
+
+onMounted(() => {
+  if (isEditing.value) loadVehicle()
+})
 </script>
 
 <template>
   <section>
-    <h1>Novo veículo</h1>
+    <h1>{{ isEditing ? 'Editar veículo' : 'Novo veículo' }}</h1>
     <RouterLink to="/">Voltar para a listagem</RouterLink>
 
-    <form @submit.prevent="saveVehicle">
+    <p v-if="loading">Carregando veículo...</p>
+
+    <form v-else @submit.prevent="saveVehicle">
       <p v-if="error">{{ error }}</p>
       <label>
         Placa
