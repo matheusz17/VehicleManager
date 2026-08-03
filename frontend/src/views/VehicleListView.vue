@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import api from '../services/api'
 
 const vehicles = ref([])
+const busca = ref('')
 const loading = ref(true)
 const error = ref('')
 const currencyFormatter = new Intl.NumberFormat('pt-BR', {
@@ -21,7 +22,9 @@ async function loadVehicles() {
   error.value = ''
 
   try {
-    const response = await api.get('/veiculos')
+    const response = await api.get('/veiculos', {
+      params: busca.value ? { busca: busca.value } : {},
+    })
     vehicles.value = response.data
   } catch {
     error.value = 'Não foi possível carregar os veículos. Verifique se a API está em execução.'
@@ -37,6 +40,17 @@ onMounted(loadVehicles)
   <section>
     <h1>Veículos</h1>
     <RouterLink to="/veiculos/novo">Novo veículo</RouterLink>
+
+    <form @submit.prevent="loadVehicles">
+      <label for="busca">Buscar veículo</label>
+      <input
+        id="busca"
+        v-model.trim="busca"
+        type="search"
+        placeholder="Marca, modelo ou placa"
+      />
+      <button type="submit">Buscar</button>
+    </form>
 
     <p v-if="loading">Carregando veículos...</p>
     <p v-else-if="error">{{ error }}</p>
